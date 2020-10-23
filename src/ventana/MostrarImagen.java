@@ -24,12 +24,13 @@ public class MostrarImagen extends JFrame {
         this.pack();
         this.setBounds(0, 0, 600, 600);
         this.setTitle("Dividir imagen");
+        this.setLayout(null);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         cargarImagen();
         p = new JPanel();
-        p.setBounds(0, 0, imagenPrincipal.getWidth(), imagenPrincipal.getHeight());
-
+        p.setBounds(300,300, 300,300);
+        p.setBackground(Color.yellow);
         this.add(p);
     }
 
@@ -45,7 +46,7 @@ public class MostrarImagen extends JFrame {
             imagenPrincipal = ImageIO.read(new File("src/img/Compromiso.png"));
             width = imagenPrincipal.getWidth();
             height = imagenPrincipal.getHeight();
-            imgRecorted = createImage(new FilteredImageSource(imagenPrincipal.getSource(), new CropImageFilter((width / 4) * 2, 0, width / 4, height / 2)));
+            imgRecorted = createImage(new FilteredImageSource(imagenPrincipal.getSource(), new CropImageFilter(250, 0, 300,300)));
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
