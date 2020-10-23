@@ -15,30 +15,32 @@ import javax.swing.JPanel;
 
 public class MostrarImagen extends JFrame {
 
+    BufferedImage imagenPrincipal;
+    int width, height;
+    Image imgRecorted;
+    JPanel p;
+
     public MostrarImagen() {
-        this.add(new Lienzo());
         this.pack();
         this.setBounds(0, 0, 600, 600);
         this.setTitle("Dividir imagen");
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        cargarImagen();
+        p = new JPanel();
+        p.setBounds(0, 0, imagenPrincipal.getWidth(), imagenPrincipal.getHeight());
+
+        this.add(p);
     }
-    
-    
 
-}
+    @Override
+    public void paint(Graphics g) {
+        super.paint(g); //To change body of generated methods, choose Tools | Templates.
+        g.drawImage(imgRecorted, 0, 0, null);
 
-class Lienzo extends JPanel {
-
-    private BufferedImage imagenPrincipal;
-    private int width, height;
-    private Image imgRecorted;
-
-    public Lienzo() {
-        loadImage();
-        this.setBounds(0, 0, imagenPrincipal.getWidth(), imagenPrincipal.getHeight());
     }
-    private void loadImage() {
+
+    public void cargarImagen() {
         try {
             imagenPrincipal = ImageIO.read(new File("src/img/Compromiso.png"));
             width = imagenPrincipal.getWidth();
@@ -49,8 +51,5 @@ class Lienzo extends JPanel {
         }
     }
 
-    @Override
-    public void paintComponent(Graphics g) {
-        g.drawImage(imgRecorted, 0, 0, null);
-    }
 }
+
