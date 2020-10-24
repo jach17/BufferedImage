@@ -11,5 +11,8 @@ public class main {
         mi = new MostrarImagen();
         mi.setVisible(true);
 
+ 
+    
+
     }
 }
