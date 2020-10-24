@@ -27,6 +27,7 @@ import sun.awt.image.FileImageSource;
 
 public class MostrarImagen extends JFrame {
 
+    
     BufferedImage imagenPrincipal, imagenPrincipalRotada, imagenPrincipalRecortada;
     int width, height;
     Image imgRecorted, imgRotated;
@@ -68,13 +69,6 @@ public class MostrarImagen extends JFrame {
         cargarImagen();
     }
 
-//
-//    @Override
-//    public void paint(Graphics g) {
-//        super.paint(g); //To change body of generated methods, choose Tools | Templates.
-//        g.drawImage(imgRecorted, 10, 10, null);
-//
-//    }
     public Image recortarImagen(BufferedImage imagenPrincipal) {
         imgRecorted = createImage(new FilteredImageSource(imagenPrincipal.getSource(), new CropImageFilter(250, 0, 200, 200)));
         return imgRecorted; //<-Esta es la imagen que enviamos al lbl
