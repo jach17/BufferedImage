@@ -1,10 +1,9 @@
 package ventana;
 
-import java.awt.Component;
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Image;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.CropImageFilter;
@@ -12,27 +11,21 @@ import java.awt.image.FilteredImageSource;
 import java.io.File;
 import java.io.IOException;
 import javax.imageio.ImageIO;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class MostrarImagen extends JFrame {
 
-    BufferedImage imagenPrincipal, imagenPrincipalRotada, imagenPrincipalRecortada;
-    int width, height;
-    Image imgRecorted = null, imgRotated;
+    BufferedImage imagenPrincipal, bufimRecorted;
+    Image imgRecorted;
     JPanel p;
-    JLabel lbl;
-    ImageIcon im;
     JButton btnAddImage, btnRotateImage;
     int grados = 0;
 
     public MostrarImagen() {
         ///Inicializa el JFrame
-        this.pack();
         this.setBounds(0, 0, 600, 600);
         this.setTitle("Dividir imagen");
         this.setLayout(null);
@@ -43,21 +36,21 @@ public class MostrarImagen extends JFrame {
         p = new JPanel();
         btnAddImage = new JButton("Cargar imagen");
 
-        btnAddImage.setBounds(20, 400, 150, 40);
+        btnAddImage.setBounds(20, 500, 150, 40);
         btnAddImage.addActionListener((ActionEvent ae) -> {
-            agregaImagen();
-            rotateImage();
+            cargarImagen();
         });
 
         btnRotateImage = new JButton("Rotar Imagen");
 
-        btnRotateImage.setBounds(400, 400, 150, 40);
+        btnRotateImage.setBounds(400, 500, 150, 40);
         btnRotateImage.addActionListener((ActionEvent ae) -> {
-            rotateImage();
+            rotar(p.getGraphics());
         });
 
-        p.setBounds(50, 50, 400, 400);
+        p.setBounds(this.getWidth() / 4, this.getHeight() / 4, 250, 250);
         p.setLayout(null);
+        p.setBackground(Color.BLACK);
 
         //Agrega objetos al frame
         this.add(btnAddImage);
@@ -66,17 +59,31 @@ public class MostrarImagen extends JFrame {
 
     }
 
-    public void agregaImagen() {
-        cargarImagen();
+    public void cargarImagen() {
+        try {
+            imagenPrincipal = ImageIO.read(new File("src/img/Compromiso.png"));
+            imgRecorted = recortarImagen(imagenPrincipal);
+            dibujarBuffered(0);
+        } catch (IOException e) {
+            System.out.println(e.getMessage());
+        }
     }
 
-    public void rotateImage() {
-        rotar(p.getGraphics());
+    public void dibujarBuffered(int grados) {
+        if (bufimRecorted != null) {
+            Graphics2D g2d = (Graphics2D) p.getGraphics();
+            g2d.translate(p.getSize().width / 2, p.getSize().height / 2);
+            g2d.rotate(Math.toRadians(grados));
+            g2d.drawImage(bufimRecorted, -bufimRecorted.getWidth() / 2, -bufimRecorted.getHeight() / 2, null);
+        } else {
+            JOptionPane.showMessageDialog(this, "Buffered no inicializado...");
+        }
     }
 
     public Image recortarImagen(BufferedImage imagenPrincipal) {
         imgRecorted = createImage(new FilteredImageSource(imagenPrincipal.getSource(), new CropImageFilter(250, 150, 200, 200)));
-        return imgRecorted; //<-Esta es la imagen que enviamos al lbl
+        bufimRecorted = imgRecortedToBuffer(imgRecorted);
+        return imgRecorted;
     }
 
     public void rotar(Graphics g) {
@@ -86,11 +93,7 @@ public class MostrarImagen extends JFrame {
             } else {
                 grados = 90;
             }
-            BufferedImage bufimRecorted = imgRecortedToBuffer(imgRecorted);
-            Graphics2D g2d = (Graphics2D) g;
-            g2d.translate(p.getSize().width / 2, p.getSize().height / 2);
-            g2d.rotate(Math.toRadians(grados));
-            g2d.drawImage(bufimRecorted, -bufimRecorted.getWidth() / 2, -bufimRecorted.getHeight() / 2, null);
+            dibujarBuffered(grados);
         } else {
             JOptionPane.showMessageDialog(this, "Usted no ha cargado la imagen");
         }
@@ -107,13 +110,4 @@ public class MostrarImagen extends JFrame {
         return bima;
     }
 
-    public void cargarImagen() {
-        try {
-            imagenPrincipal = ImageIO.read(new File("src/img/Compromiso.png"));
-            imgRecorted = recortarImagen(imagenPrincipal);
-
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
-        }
-    }
 }
