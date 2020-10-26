@@ -17,7 +17,6 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class MostrarImagen extends JFrame {
-
     BufferedImage imagenPrincipal, bufimRecorted;
     Image imgRecorted;
     JPanel p;
@@ -32,7 +31,7 @@ public class MostrarImagen extends JFrame {
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //Inicializa objetos a usar
+        //Inicializa objetos a usa
         p = new JPanel();
         btnAddImage = new JButton("Cargar imagen");
 
