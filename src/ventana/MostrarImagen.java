@@ -1,4 +1,4 @@
-package ventana;
+package ventana; 
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -17,11 +17,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 public class MostrarImagen extends JFrame {
-    BufferedImage imagenPrincipal, bufimRecorted;
+
+    BufferedImage imagenPrincipal, bufimRecorted, imageToDraw;
     Image imgRecorted;
     JPanel p;
     JButton btnAddImage, btnRotateImage;
     int grados = 0;
+    int[][] pixe, pixeRotado;
 
     public MostrarImagen() {
         ///Inicializa el JFrame
@@ -62,21 +64,54 @@ public class MostrarImagen extends JFrame {
         try {
             imagenPrincipal = ImageIO.read(new File("src/img/Compromiso.png"));
             imgRecorted = recortarImagen(imagenPrincipal);
-            dibujarBuffered(0);
+            dibujarBuffered();
         } catch (IOException e) {
             System.out.println(e.getMessage());
         }
     }
 
-    public void dibujarBuffered(int grados) {
+    public void dibujarBuffered() {
         if (bufimRecorted != null) {
             Graphics2D g2d = (Graphics2D) p.getGraphics();
             g2d.translate(p.getSize().width / 2, p.getSize().height / 2);
-            g2d.rotate(Math.toRadians(grados));
-            g2d.drawImage(bufimRecorted, -bufimRecorted.getWidth() / 2, -bufimRecorted.getHeight() / 2, null);
+            pixe = obtenerPixeles(bufimRecorted);
+            pixeRotado = rotarCuadrado90Grados(pixe);
+            imageToDraw = getBufferedFromArray(pixeRotado, bufimRecorted.getWidth(), bufimRecorted.getHeight(), bufimRecorted);
+            g2d.drawImage(imageToDraw, -bufimRecorted.getWidth() / 2, -bufimRecorted.getHeight() / 2, null);
         } else {
             JOptionPane.showMessageDialog(this, "Buffered no inicializado...");
         }
+    }
+
+    public int[][] rotarCuadrado90Grados(int[][] matOriginal) {
+        int size = matOriginal.length;
+        int[][] matNueva = new int[size][size];
+        for (int i = 0, j = size - 1; i < size && j >= 0; i++, j--) {
+            for (int k = 0; k < size; k++) {
+                matNueva[k][j] = matOriginal[i][k];
+            }
+        }
+        return matNueva;
+    }
+
+    public int[][] obtenerPixeles(BufferedImage img) {
+        int[][] pixels = new int[img.getWidth()][img.getHeight()];
+
+        for (int i = 0; i < img.getWidth(); i++) {
+            for (int j = 0; j < img.getHeight(); j++) {
+                pixels[i][j] = img.getRGB(i, j);
+            }
+        }
+        return pixels;
+    }
+
+    public BufferedImage getBufferedFromArray(int[][] pixels, int width, int height, BufferedImage bufferedImg) {
+        for (int i = 0; i < width; i++) {
+            for (int j = 0; j < height; j++) {
+                bufferedImg.setRGB(i, j, pixels[i][j]);
+            }
+        }
+        return bufferedImg;
     }
 
     public Image recortarImagen(BufferedImage imagenPrincipal) {
@@ -87,12 +122,7 @@ public class MostrarImagen extends JFrame {
 
     public void rotar(Graphics g) {
         if (imgRecorted != null) {
-            if (grados < 360) {
-                grados += 90;
-            } else {
-                grados = 90;
-            }
-            dibujarBuffered(grados);
+            dibujarBuffered();
         } else {
             JOptionPane.showMessageDialog(this, "Usted no ha cargado la imagen");
         }
